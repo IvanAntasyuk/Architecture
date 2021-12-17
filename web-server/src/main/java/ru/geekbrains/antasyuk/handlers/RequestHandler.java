@@ -1,5 +1,7 @@
 package ru.geekbrains.antasyuk.handlers;
 
+import ru.geekbrains.antasyuk.config.Config;
+import ru.geekbrains.antasyuk.config.ConfigFromProperties;
 import ru.geekbrains.antasyuk.domain.HttpRequest;
 import ru.geekbrains.antasyuk.service.SocketService;
 
@@ -9,16 +11,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Deque;
 
-import static ru.geekbrains.antasyuk.сonstants.Constant.WWW;
 
 public class RequestHandler implements Runnable {
 
     private final SocketService socketService;
     private final RequestParser requestParser;
+    Config config = new ConfigFromProperties("server.properties");
 
-    public RequestHandler(SocketService socketService, RequestParser requestParser) {
+    public RequestHandler(SocketService socketService, RequestParser requestParser,Config config) {
         this.requestParser = requestParser;
         this.socketService = socketService;
+        this.config = config;
     }
 
     @Override
@@ -27,7 +30,7 @@ public class RequestHandler implements Runnable {
         HttpRequest httpRequest = requestParser.parseRequest(rawRequest);
 
         if (httpRequest.getMethod().equals("GET")) {
-            Path path = Paths.get(WWW, httpRequest.getUrl());
+            Path path = Paths.get(config.getWwwHome(), httpRequest.getUrl());
             if (!Files.exists(path)) {
                 StringBuilder res = new StringBuilder();
                 res.append("HTTP/1.1 404 NOT_FOUND\n");

@@ -15,13 +15,14 @@ public class SocketService implements Closeable {
     }
 
     public Deque<String> readRequest() {
+        Deque<String> request = new LinkedList<>();
         try {
             BufferedReader input = new BufferedReader(
                     new InputStreamReader(
                             socket.getInputStream(), StandardCharsets.UTF_8));
 
             while (!input.ready()) ;
-            Deque<String> request = new LinkedList<>();
+
             while (input.ready()) {
                 String line = input.readLine();
                 System.out.println(line);
@@ -32,7 +33,7 @@ public class SocketService implements Closeable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return request;
     }
 
     public void sendResponse(String send) {
